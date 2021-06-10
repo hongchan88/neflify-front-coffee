@@ -8,6 +8,9 @@ import { HelmetProvider } from "react-helmet-async";
 import { isLoggedInVar, darkModeVar, client } from "./apollo.js";
 import { darkTheme, GlobalStyles, lightTheme } from "./styles";
 import Signup from "./screen/Signup";
+import AddShop from "./screen/AddShop";
+import Shop from "./screen/ShopEdit";
+import ShopEdit from "./screen/ShopEdit";
 
 function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -27,6 +30,12 @@ function App() {
               </Route>
               <Route path="/sign-up" exact>
                 <Signup />
+              </Route>
+              <Route path="/add" exact>
+                <AddShop />
+              </Route>
+              <Route path="/shopEdit/:id" exact>
+                <ShopEdit />
               </Route>
             </Switch>
           </Router>

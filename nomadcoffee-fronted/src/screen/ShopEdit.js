@@ -5,12 +5,13 @@ import Separator from "./components/auth/Separator";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import WhiteBox from "./components/auth/WhiteBox";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams, useLocation } from "react-router-dom";
 
 import Pagetitle from "./components/PageTitile";
 import { useForm } from "react-hook-form";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import routes from "../routes";
+import jwt from "jsonwebtoken";
 
 const Button = styled.input`
   border: none;
@@ -55,44 +56,44 @@ const Input = styled.input`
   }
 `;
 
-const CREATE_ACCOUNT_MUTATION = gql`
-  mutation createAccount(
-    $username: String!
-    $email: String!
-    $name: String!
-    $location: String!
-    $password: String!
+const EDIT_COFFEESHOP = gql`
+  mutation EDIT_COFFEESHOP(
+    $shopid: Int
+    $name: String
+    $latitude: String
+    $longitude: String
   ) {
-    createAccount(
-      username: $username
-      email: $email
+    editCoffeeShop(
+      shopid: $shopid
       name: $name
-      location: $location
-      password: $password
+      latitude: $latitude
+      longitude: $longitude
     ) {
       ok
     }
   }
 `;
 
-function Signup() {
+function ShopEdit() {
   const history = useHistory();
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const { id } = useParams();
+  const ShopId = parseInt(id);
+
   const onCompleted = (data) => {
     const {
-      createAccount: { ok },
+      editCoffeeShop: { ok },
     } = data;
     console.log(data);
     if (!ok) {
       return;
     }
-    const { username, password } = getValues();
     history.push(routes.home, {
-      message: "Acount created please log in",
-      username,
-      password,
+      message: "<-edited done. please refresh to see updated",
+      editId: ShopId,
     });
   };
-  const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
+  const [editShop, { loading }] = useMutation(EDIT_COFFEESHOP, {
     onCompleted,
   });
   const { register, handleSubmit, getValues } = useForm({ mode: "onChange" });
@@ -101,9 +102,10 @@ function Signup() {
     if (loading) {
       return;
     }
-    createAccount({
+    editShop({
       variables: {
         ...data,
+        shopid: ShopId,
       },
     });
   };
@@ -111,7 +113,7 @@ function Signup() {
   return (
     <AuthLayout>
       <Pagetitle title="Sign up" />
-      <Heading>Sign in to your Account</Heading>
+      <Heading>Edit your shop</Heading>
       <WhiteBox>
         <Icon>
           <FontAwesomeIcon icon={faCoffee} size="3x" />
@@ -120,30 +122,30 @@ function Signup() {
         <form onSubmit={handleSubmit(onSubmitValid)}>
           <Input
             ref={register({ required: "user name required" })}
-            name="username"
-            type="text"
-            placeholder="username"
-          />
-          <Input
-            ref={register({ required: "password required" })}
-            name="password"
-            type="text"
-            placeholder="password"
-          />
-          <Input
-            ref={register({ required: "name required" })}
             name="name"
             type="text"
-            placeholder="email"
+            placeholder="name"
           />
           <Input
-            ref={register({ required: "location required" })}
-            name="location"
+            ref={register}
+            name="latitude"
             type="text"
-            placeholder="location"
+            placeholder="latitude"
+          />
+          <Input
+            ref={register}
+            name="longitude"
+            type="text"
+            placeholder="longitude"
+          />
+          <Input
+            ref={register}
+            name="categories"
+            type="text"
+            placeholder="categories"
           />
 
-          <Button type="submit" value="Sign up" />
+          <Button type="submit" value="Edit shop" />
         </form>
         <TextWrapper></TextWrapper>
       </WhiteBox>
@@ -151,4 +153,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default ShopEdit;

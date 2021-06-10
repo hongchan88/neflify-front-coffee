@@ -13,6 +13,8 @@ const SButton = styled.input`
   opacity: ${(props) => (props.disabled ? "0.2" : "1")};
 `;
 
+
+
 function AuthButton(props) {
   console.log(props.disabled);
   return <SButton {...props} />;

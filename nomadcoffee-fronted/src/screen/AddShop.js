@@ -11,6 +11,7 @@ import Pagetitle from "./components/PageTitile";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 import routes from "../routes";
+import jwt from "jsonwebtoken";
 
 const Button = styled.input`
   border: none;
@@ -55,55 +56,49 @@ const Input = styled.input`
   }
 `;
 
-const CREATE_ACCOUNT_MUTATION = gql`
-  mutation createAccount(
-    $username: String!
-    $email: String!
+const SHOPCREATE_MUTATION = gql`
+  mutation createcoffeeshop(
     $name: String!
-    $location: String!
-    $password: String!
+    $latitude: String!
+    $longitude: String
+    $categories: String
+    $id: Int
   ) {
-    createAccount(
-      username: $username
-      email: $email
+    CreateCoffeeShop(
       name: $name
-      location: $location
-      password: $password
+      latitude: $latitude
+      longitude: $longitude
+      categories: $categories
+      id: $id
     ) {
       ok
     }
   }
 `;
 
-function Signup() {
-  const history = useHistory();
-  const onCompleted = (data) => {
-    const {
-      createAccount: { ok },
-    } = data;
-    console.log(data);
-    if (!ok) {
-      return;
-    }
-    const { username, password } = getValues();
-    history.push(routes.home, {
-      message: "Acount created please log in",
-      username,
-      password,
-    });
-  };
-  const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
-    onCompleted,
-  });
-  const { register, handleSubmit, getValues } = useForm({ mode: "onChange" });
+function AddShop() {
+  // history.push(routes.home, {
+  //   message: "Acount created please log in",
+  // });
 
+  const token = localStorage.getItem("token");
+  const { id } = jwt.verify(token, "<M0(8%K=.zxP?zj%h%ltq2c5z{ZNi6");
+
+  const [createShop, { loading }] = useMutation(SHOPCREATE_MUTATION, {
+    onCompleted: (data) => {
+      console.log(data, "cinpla");
+    },
+  });
+  const { register, handleSubmit } = useForm();
   const onSubmitValid = (data) => {
     if (loading) {
       return;
     }
-    createAccount({
+    console.log(data);
+    createShop({
       variables: {
         ...data,
+        id,
       },
     });
   };
@@ -111,7 +106,7 @@ function Signup() {
   return (
     <AuthLayout>
       <Pagetitle title="Sign up" />
-      <Heading>Sign in to your Account</Heading>
+      <Heading>Create new Coffee shop</Heading>
       <WhiteBox>
         <Icon>
           <FontAwesomeIcon icon={faCoffee} size="3x" />
@@ -120,30 +115,32 @@ function Signup() {
         <form onSubmit={handleSubmit(onSubmitValid)}>
           <Input
             ref={register({ required: "user name required" })}
-            name="username"
-            type="text"
-            placeholder="username"
-          />
-          <Input
-            ref={register({ required: "password required" })}
-            name="password"
-            type="text"
-            placeholder="password"
-          />
-          <Input
-            ref={register({ required: "name required" })}
             name="name"
             type="text"
-            placeholder="email"
+            placeholder="name"
           />
           <Input
-            ref={register({ required: "location required" })}
-            name="location"
+            ref={register}
+            name="latitude"
             type="text"
-            placeholder="location"
+            placeholder="latitude"
+          />
+          <Input
+            ref={register}
+            name="longitude"
+            type="text"
+            placeholder="longitude"
+          />
+          <Input
+            ref={register}
+            name="categories"
+            type="text"
+            placeholder="categories"
           />
 
-          <Button type="submit" value="Sign up" />
+          <Input ref={register} name="file" type="text" placeholder="file" />
+
+          <Button type="submit" value="Add shop" />
         </form>
         <TextWrapper></TextWrapper>
       </WhiteBox>
@@ -151,4 +148,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default AddShop;
