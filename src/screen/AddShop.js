@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import WhiteBox from "./components/auth/WhiteBox";
 import { useHistory } from "react-router-dom";
-
+import createHistory from "history/createBrowserHistory";
 import Pagetitle from "./components/PageTitile";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
@@ -80,13 +80,16 @@ function AddShop() {
   // history.push(routes.home, {
   //   message: "Acount created please log in",
   // });
-
+  const history = useHistory();
   const token = localStorage.getItem("token");
   const { id } = jwt.verify(token, "<M0(8%K=.zxP?zj%h%ltq2c5z{ZNi6");
 
   const [createShop, { loading }] = useMutation(SHOPCREATE_MUTATION, {
     onCompleted: (data) => {
-      console.log(data, "cinpla");
+      const history = createHistory();
+
+      history.push(routes.home, {});
+      history.go(0);
     },
   });
   const { register, handleSubmit } = useForm();

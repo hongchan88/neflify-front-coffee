@@ -63,6 +63,10 @@ function Home() {
   return (
     <div>
       <h1>Welcome we did it </h1>
+      <h1>
+        {" "}
+        <Link to="/add">Click here to add shop</Link>
+      </h1>
       <div>
         <h1>List of the shops you registered</h1>
         {!loading ? shopName() : undefined}
