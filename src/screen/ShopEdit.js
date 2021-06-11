@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import WhiteBox from "./components/auth/WhiteBox";
 import { useHistory, useParams, useLocation } from "react-router-dom";
-
+import createHistory from "history/createBrowserHistory";
 import Pagetitle from "./components/PageTitile";
 import { useForm } from "react-hook-form";
 import { gql, useMutation, useQuery, useReactiveVar } from "@apollo/client";
@@ -88,10 +88,12 @@ function ShopEdit() {
     if (!ok) {
       return;
     }
+    const history = createHistory();
     history.push(routes.home, {
-      message: "<-edited done. please refresh to see updated",
+      message: "<-edited done. ",
       editId: ShopId,
     });
+    history.go(0);
   };
   const [editShop, { loading }] = useMutation(EDIT_COFFEESHOP, {
     onCompleted,
