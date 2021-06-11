@@ -28,6 +28,6 @@ export const disableDarkMode = () => {
 };
 
 export const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql",
+  uri: "https://instaclon-nomad-challenge.herokuapp.com/graphql",
   cache: new InMemoryCache(),
 });

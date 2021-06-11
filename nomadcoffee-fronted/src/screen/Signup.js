@@ -131,10 +131,16 @@ function Signup() {
             placeholder="password"
           />
           <Input
+            ref={register({ required: "email required" })}
+            name="email"
+            type="text"
+            placeholder="email"
+          />
+          <Input
             ref={register({ required: "name required" })}
             name="name"
             type="text"
-            placeholder="email"
+            placeholder="name"
           />
           <Input
             ref={register({ required: "location required" })}
